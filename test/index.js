@@ -75,6 +75,12 @@ describe('Serialize#unserialize(obj)', function() {
     serialize.unserialize(serialize.serialize(objCircular)).self.self.should.be.a('object');
   });
 
+  it('should throw an error when unserialize executable JavaScript code', function() {
+    (function() {
+      serialize.unserialize('{"rce":"_$$ND_FUNC$$_function (){console.log(\'exploited\')}()"}');
+    }).should.throwError(/executable JavaScript/);
+  });
+
   it('should throw an error when unserialize a object with native code', function() {
     (function() {
       serialize.unserialize(serialize.serialize(objWithNativeCode, true)).method();
